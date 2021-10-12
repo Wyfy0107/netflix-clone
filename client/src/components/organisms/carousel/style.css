@@ -1,0 +1,16 @@
+.image-item {
+  padding: 20px 0 20px 7px;
+  width: 200px;
+}
+
+.image-item:hover {
+  z-index: 100;
+}
+
+.container {
+  margin: 1rem;
+}
+
+.react-multiple-carousel__arrow::before {
+  font-weight: bolder;
+}
