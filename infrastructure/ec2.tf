@@ -103,3 +103,12 @@ resource "null_resource" "provision" {
     ]
   }
 }
+
+resource "aws_route53_record" "netflix_instance" {
+  zone_id         = var.route53_hosted_zone_id
+  name            = var.domain_name
+  type            = "A"
+  ttl             = "300"
+  records         = [aws_eip.ec2_ip.public_ip]
+  allow_overwrite = true
+}

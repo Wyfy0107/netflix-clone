@@ -37,3 +37,11 @@ variable "certbot_domain" {
 variable "certbot_email" {
   type = string
 }
+
+variable "route53_hosted_zone_id" {
+  type = string
+}
+
+variable "domain_name" {
+  type = string
+}
