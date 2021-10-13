@@ -1,5 +1,5 @@
 variable "region" {
-  default = "us-east-1"
+  type = string
 }
 
 variable "aws_access_key" {
@@ -30,18 +30,14 @@ variable "hosted_zone_arn" {
   type = string
 }
 
+variable "hosted_zone_id" {
+  type = string
+}
+
 variable "certbot_domain" {
   default = "netflix.mlem-mlem.net"
 }
 
 variable "certbot_email" {
-  type = string
-}
-
-variable "route53_hosted_zone_id" {
-  type = string
-}
-
-variable "domain_name" {
   type = string
 }

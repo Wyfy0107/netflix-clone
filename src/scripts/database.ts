@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 import Movie from '../models/Movie'
 import axios from 'axios'
 
-mongoose.connect('mongodb://localhost:27017/netflix', {
+mongoose.connect('', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,

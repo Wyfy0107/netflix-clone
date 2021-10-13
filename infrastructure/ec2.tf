@@ -1,7 +1,8 @@
 locals {
   common_tags = {
-    managed_by = "terraform"
-    project    = "netflix-clone"
+    managed_by  = "terraform"
+    project     = var.project
+    environment = var.environment
   }
 }
 
@@ -12,6 +13,11 @@ resource "aws_instance" "netflix" {
   iam_instance_profile = aws_iam_instance_profile.netflix_instance.name
   subnet_id            = aws_subnet.public[0].id
   key_name             = aws_key_pair.ec2.key_name
+
+  root_block_device {
+    volume_size = 10
+    volume_type = "gp2"
+  }
 
   vpc_security_group_ids = [aws_security_group.ec2.id]
   tags                   = local.common_tags
@@ -53,7 +59,7 @@ resource "aws_security_group" "ec2" {
   }
 
   ingress {
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["88.114.118.18/32"]
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -70,7 +76,7 @@ resource "aws_security_group" "ec2" {
 resource "null_resource" "provision" {
   triggers = {
     env       = sha1(file("server-provision/.env"))
-    bootstrap = sha1(file("server-provision/bootstrap.sh"))
+    bootstrap = sha1(file("server-provision/init.sh"))
     nginx     = sha1(file("server-provision/nginx.conf"))
   }
 
@@ -105,10 +111,10 @@ resource "null_resource" "provision" {
 }
 
 resource "aws_route53_record" "netflix_instance" {
-  zone_id         = var.route53_hosted_zone_id
-  name            = var.domain_name
+  zone_id         = var.hosted_zone_id
+  name            = var.certbot_domain
   type            = "A"
   ttl             = "300"
-  records         = [aws_eip.ec2_ip.public_ip]
+  records         = [aws_eip.ec2_ip[0].public_ip]
   allow_overwrite = true
 }
