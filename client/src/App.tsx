@@ -11,7 +11,7 @@ const Admin = lazy(() => import('./pages/admin'))
 const Home = lazy(() => import('./pages/home'))
 
 const devUrl = 'http://localhost:5000'
-const prodUrl = 'https://wetflix.herokuapp.com'
+const prodUrl = 'https://netflix.mlem-mlem.net'
 const check = process.env.NODE_ENV === 'production'
 export const url = check ? prodUrl : devUrl
 
