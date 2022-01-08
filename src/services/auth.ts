@@ -1,5 +1,14 @@
 import User, { UserDocument } from '../models/User'
 
+type Profile = {
+  email: string
+  name: string
+  picture: string
+  given_name: string
+  family_name: string
+  sub: string
+}
+
 const create = (user: UserDocument): Promise<UserDocument> => {
   return user.save()
 }
@@ -15,9 +24,14 @@ const findUserById = async (id: string): Promise<UserDocument | null> => {
   return user
 }
 
-const findOrCreate = async (profile: any): Promise<UserDocument> => {
-  const googleId = profile.id
-  const email = profile.emails[0].value
+const findOrCreate = async (profile: Profile): Promise<UserDocument> => {
+  const {
+    sub: googleId,
+    email,
+    given_name: givenName,
+    family_name: familyName,
+    picture,
+  } = profile
   //**In case the user already registered with email by local strategy */
   //**We will search by email also */
   const user = await User.findOne({ $or: [{ googleId }, { email }] }).populate(
@@ -26,19 +40,19 @@ const findOrCreate = async (profile: any): Promise<UserDocument> => {
 
   if (!user) {
     const newUser = new User({
-      googleId: profile.id,
-      firstName: profile.name.givenName,
-      lastName: profile.name.familyName,
-      email: profile.emails[0].value,
-      photo: profile.photos[0].value,
-      isAdmin: profile.emails[0].value === 'nguyenduy010798@gmail.com',
+      googleId: googleId,
+      firstName: givenName,
+      lastName: familyName,
+      email: email,
+      photo: picture,
+      isAdmin: email === 'nguyenduy010798@gmail.com',
     })
 
-    newUser.save()
+    await newUser.save()
     return newUser
   }
 
-  user.photo = profile.photos[0].value
+  user.photo = picture
   return user.save()
 }
 

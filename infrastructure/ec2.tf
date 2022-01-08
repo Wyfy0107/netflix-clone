@@ -3,6 +3,7 @@ locals {
     managed_by  = "terraform"
     project     = var.project
     environment = var.environment
+    Name        = "my-projects"
   }
 }
 
@@ -58,12 +59,12 @@ resource "aws_security_group" "ec2" {
     protocol    = "tcp"
   }
 
-  ingress {
-    cidr_blocks = ["88.114.118.18/32"]
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-  }
+  # ingress {
+  #   cidr_blocks = ["0.0.0.0/0"]
+  #   from_port   = 22
+  #   to_port     = 22
+  #   protocol    = "tcp"
+  # }
 
   egress {
     cidr_blocks = ["0.0.0.0/0"]

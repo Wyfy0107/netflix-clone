@@ -1,5 +1,6 @@
 import User from '../models/User'
 import Movie from '../models/Movie'
+import { InternalServerError } from '../helpers/apiError'
 
 const add = async (
   userId: string,
@@ -35,7 +36,7 @@ const add = async (
       return 'movie added'
     }
   } catch (error) {
-    throw new Error(error.message)
+    throw new InternalServerError()
   }
 }
 

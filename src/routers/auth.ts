@@ -11,17 +11,9 @@ router.post('/register', formValidate.register, createUser)
 
 router.post('/login/local', formValidate.login, localLogin)
 
-router.get(
+router.post(
   '/login/google',
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-    session: false,
-  })
-)
-
-router.get(
-  '/google/callback',
-  passport.authenticate('google', {
+  passport.authenticate('google-id-token', {
     scope: ['profile', 'email'],
     session: false,
   }),

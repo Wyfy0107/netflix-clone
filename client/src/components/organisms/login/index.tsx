@@ -10,13 +10,21 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
-import { Link, Redirect } from 'react-router-dom'
+import { Link, Redirect, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
+import GoogleLoginButton from 'react-google-login'
+import axios from 'axios'
 
 import Copyright from './CopyRight'
-import { submitLoginForm, getUserData } from '../../../redux/actions'
+import {
+  submitLoginForm,
+  getUserData,
+  submitLoginSuccess,
+} from '../../../redux/actions'
 import { AppState } from '../../../redux/types'
+import { User } from '../../../redux/actions/types'
+import { url } from '../../../App'
 
 const CustomLink = styled(Link)`
   text-decoration: none;
@@ -46,12 +54,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
+type GoogleLoginResponse = {
+  user: User
+  token: string
+}
+
 export default function SignIn() {
   const [form, setForm] = useState({
     email: '',
     password: '',
   })
 
+  const history = useHistory()
   const classes = useStyles()
   const dispatch = useDispatch()
   const isLoggedIn = useSelector((state: AppState) => state.auth.isLoggedIn)
@@ -76,6 +90,30 @@ export default function SignIn() {
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault()
     dispatch(submitLoginForm(form))
+  }
+
+  const responseGoogle = async (response: any) => {
+    const tokenId: string | undefined = response?.tokenId
+    if (!tokenId) return
+
+    const result = await axios.post<GoogleLoginResponse>(
+      `${url}/api/v1/auth/login/google`,
+      {
+        id_token: tokenId,
+      }
+    )
+
+    if (result.status === 200) {
+      const token = result.data.token
+      localStorage.setItem('token', token)
+
+      // save userData to redux or local state
+      const userData = result.data.user
+      dispatch(submitLoginSuccess(userData))
+      history.push('/home')
+    } else {
+      alert('Login with google failed')
+    }
   }
 
   return (
@@ -126,7 +164,7 @@ export default function SignIn() {
           >
             Sign In
           </Button>
-          {/* <Grid
+          <Grid
             container
             direction="column"
             justify="center"
@@ -136,10 +174,13 @@ export default function SignIn() {
               or
             </Typography>
             <GoogleLoginButton
-              style={{ width: '100%', height: '36px', margin: '0' }}
-              onClick={() => window.open('/api/v1/auth/login/google/', '_self')}
+              clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
+              buttonText="Login"
+              onSuccess={responseGoogle}
+              onFailure={responseGoogle}
+              cookiePolicy={'single_host_origin'}
             />
-          </Grid> */}
+          </Grid>
           <Grid container>
             <Grid item xs>
               <LinkUi href="#" variant="body2">

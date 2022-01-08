@@ -1,14 +1,13 @@
 import passportLocal from 'passport-local'
 import passportJWT from 'passport-jwt'
 import bcrypt from 'bcrypt'
-import passportGoogle from 'passport-google-oauth20'
+import GoogleTokenStrategy from 'passport-google-id-token'
 
 import AuthService from '../services/auth'
 
 const LocalStrategy = passportLocal.Strategy
 const JWTStrategy = passportJWT.Strategy
 const ExtractJWT = passportJWT.ExtractJwt
-const GoogleStrategy = passportGoogle.Strategy
 
 const local = new LocalStrategy(
   {
@@ -50,16 +49,15 @@ const jwt = new JWTStrategy(
   }
 )
 
-const google = new GoogleStrategy(
+export const google = new GoogleTokenStrategy(
   {
-    clientID: process.env.GOOGLE_CLIENT_ID as string,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    callbackURL: '/api/v1/auth/google/callback',
-    scope: ['profile', 'email'],
+    clientId: process.env.GOOGLE_CLIENT_ID,
   },
-  async (accessToken: any, refreshToken: any, profile: any, done: any) => {
-    const user = await AuthService.findOrCreate(profile)
-    return done(null, user)
+  async (parsedToken: any, googleId: any, done: any) => {
+    const user = await AuthService.findOrCreate(parsedToken.payload)
+
+    // 2 arguments, first one is the error object, second is the data you want to forward
+    done(null, user)
   }
 )
 

@@ -57,15 +57,13 @@ export const googleLogin = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userId = req.user._id
-  const user = (await AuthService.findUserById(userId)) as UserDocument
-  const token = jwt.sign({ userId: userId }, process.env.JWT_SECRET as string)
+  const user = req.user as UserDocument
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET as string)
 
   const userSerialized = { ...user }
   userSerialized.password = ''
 
-  res.cookie('token', token)
-  res.redirect('/')
+  res.json({ token, user: userSerialized })
 }
 
 //**passport custom callback */

@@ -111,7 +111,6 @@ describe('movie service', () => {
     const movieName = movie.name
 
     const data = await MovieService.findByName(movieName)
-    console.log(data[0].name)
     expect(data[0].name).toEqual(movie.name)
   })
 

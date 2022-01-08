@@ -10,10 +10,7 @@ const MoviePage = lazy(() => import('./pages/movie-page'))
 const Admin = lazy(() => import('./pages/admin'))
 const Home = lazy(() => import('./pages/home'))
 
-const devUrl = 'http://localhost:5000'
-const prodUrl = 'https://netflix.mlem-mlem.net'
-const check = process.env.NODE_ENV === 'production'
-export const url = check ? prodUrl : devUrl
+export const url = process.env.REACT_APP_BACKEND
 
 function App() {
   return (

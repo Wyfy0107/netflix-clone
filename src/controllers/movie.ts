@@ -127,7 +127,6 @@ export const findAll = async (
     }
     res.json(await MovieService.findAll(option))
   } catch (error) {
-    console.log('error', error)
     next(new NotFoundError('Movies not found', error))
   }
 }
