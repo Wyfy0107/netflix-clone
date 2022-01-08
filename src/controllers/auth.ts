@@ -58,7 +58,11 @@ export const googleLogin = async (
   next: NextFunction
 ) => {
   const user = req.user as UserDocument
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET as string)
+  const token = jwt.sign(
+    { userId: user._id },
+    process.env.JWT_SECRET as string,
+    { expiresIn: '4h' }
+  )
 
   const userSerialized = { ...user }
   userSerialized.password = ''
@@ -79,7 +83,11 @@ export const localLogin = (req: Request, res: Response, next: NextFunction) => {
       return next(new NotFoundError(info.message))
     }
     const userId = user._id
-    const token = jwt.sign({ userId: userId }, process.env.JWT_SECRET as string)
+    const token = jwt.sign(
+      { userId: userId },
+      process.env.JWT_SECRET as string,
+      { expiresIn: '4h' }
+    )
 
     const userSerialized = { ...user._doc }
     userSerialized.password = ''
